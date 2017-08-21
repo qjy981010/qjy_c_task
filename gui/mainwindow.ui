@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1070</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>1051</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QTreeWidget" name="treeWidget">
+       <column>
+        <property name="text">
+         <string>organizations</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="info_label">
+         <property name="text">
+          <string>Information</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="infoList"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="deleteButton">
+         <property name="text">
+          <string>delete</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="childClass">
+         <property name="text">
+          <string>Achievements or Contributors</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="childList"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="insertButton">
+         <property name="text">
+          <string>insert</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1070</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuModify">
+    <property name="title">
+     <string>&amp;Modify</string>
+    </property>
+    <addaction name="actionModify_organization"/>
+    <addaction name="actionModify_achievement"/>
+    <addaction name="actionModify_contributor"/>
+   </widget>
+   <widget class="QMenu" name="menuDelete">
+    <property name="title">
+     <string>De&amp;lete</string>
+    </property>
+    <addaction name="actionDelete_organization"/>
+    <addaction name="actionDelete_achievement"/>
+    <addaction name="actionDelete_contributor"/>
+   </widget>
+   <widget class="QMenu" name="menuInsert">
+    <property name="title">
+     <string>I&amp;nsert</string>
+    </property>
+    <addaction name="actionInsert_organization"/>
+    <addaction name="actionInsert_achievement"/>
+    <addaction name="actionInsert_contributor"/>
+   </widget>
+   <addaction name="menuInsert"/>
+   <addaction name="menuModify"/>
+   <addaction name="menuDelete"/>
+  </widget>
+  <action name="actionModify_organization">
+   <property name="text">
+    <string>&amp;Modify organization</string>
+   </property>
+  </action>
+  <action name="actionModify_achievement">
+   <property name="text">
+    <string>M&amp;odify achievement</string>
+   </property>
+  </action>
+  <action name="actionModify_contributor">
+   <property name="text">
+    <string>Modify &amp;contributor</string>
+   </property>
+  </action>
+  <action name="actionDelete_organization">
+   <property name="text">
+    <string>&amp;Delete organization</string>
+   </property>
+  </action>
+  <action name="actionDelete_achievement">
+   <property name="text">
+    <string>D&amp;elete achievement</string>
+   </property>
+  </action>
+  <action name="actionDelete_contributor">
+   <property name="text">
+    <string>Delete &amp;contributor</string>
+   </property>
+  </action>
+  <action name="actionInsert_organization">
+   <property name="text">
+    <string>&amp;Insert organization</string>
+   </property>
+  </action>
+  <action name="actionInsert_achievement">
+   <property name="text">
+    <string>I&amp;nsert achievement</string>
+   </property>
+  </action>
+  <action name="actionInsert_contributor">
+   <property name="text">
+    <string>Insert &amp;contributor</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
