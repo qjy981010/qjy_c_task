@@ -16,6 +16,7 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -40,8 +41,13 @@ public:
     QAction *actionInsert_achievement;
     QAction *actionInsert_contributor;
     QWidget *centralWidget;
-    QWidget *widget;
+    QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout;
+    QVBoxLayout *verticalLayout_3;
+    QVBoxLayout *verticalLayout_4;
+    QHBoxLayout *horizontalLayout_2;
+    QLineEdit *searchLine;
+    QPushButton *searchButton;
     QTreeWidget *treeWidget;
     QVBoxLayout *verticalLayout_2;
     QLabel *info_label;
@@ -52,8 +58,6 @@ public:
     QListWidget *childList;
     QPushButton *insertButton;
     QMenuBar *menuBar;
-    QMenu *menuModify;
-    QMenu *menuDelete;
     QMenu *menuInsert;
 
     void setupUi(QMainWindow *MainWindow)
@@ -81,33 +85,62 @@ public:
         actionInsert_contributor->setObjectName(QStringLiteral("actionInsert_contributor"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
-        widget = new QWidget(centralWidget);
-        widget->setObjectName(QStringLiteral("widget"));
-        widget->setGeometry(QRect(10, 0, 1051, 591));
-        horizontalLayout = new QHBoxLayout(widget);
+        layoutWidget = new QWidget(centralWidget);
+        layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
+        layoutWidget->setGeometry(QRect(10, 10, 1051, 591));
+        horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setSpacing(6);
         horizontalLayout->setContentsMargins(11, 11, 11, 11);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        treeWidget = new QTreeWidget(widget);
+        verticalLayout_3 = new QVBoxLayout();
+        verticalLayout_3->setSpacing(6);
+        verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+
+        horizontalLayout->addLayout(verticalLayout_3);
+
+        verticalLayout_4 = new QVBoxLayout();
+        verticalLayout_4->setSpacing(6);
+        verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setSpacing(6);
+        horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
+        searchLine = new QLineEdit(layoutWidget);
+        searchLine->setObjectName(QStringLiteral("searchLine"));
+
+        horizontalLayout_2->addWidget(searchLine);
+
+        searchButton = new QPushButton(layoutWidget);
+        searchButton->setObjectName(QStringLiteral("searchButton"));
+        searchButton->setAutoDefault(false);
+
+        horizontalLayout_2->addWidget(searchButton);
+
+
+        verticalLayout_4->addLayout(horizontalLayout_2);
+
+        treeWidget = new QTreeWidget(layoutWidget);
         treeWidget->setObjectName(QStringLiteral("treeWidget"));
 
-        horizontalLayout->addWidget(treeWidget);
+        verticalLayout_4->addWidget(treeWidget);
+
+
+        horizontalLayout->addLayout(verticalLayout_4);
 
         verticalLayout_2 = new QVBoxLayout();
         verticalLayout_2->setSpacing(6);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
-        info_label = new QLabel(widget);
+        info_label = new QLabel(layoutWidget);
         info_label->setObjectName(QStringLiteral("info_label"));
 
         verticalLayout_2->addWidget(info_label);
 
-        infoList = new QListWidget(widget);
+        infoList = new QListWidget(layoutWidget);
         infoList->setObjectName(QStringLiteral("infoList"));
 
         verticalLayout_2->addWidget(infoList);
 
-        deleteButton = new QPushButton(widget);
+        deleteButton = new QPushButton(layoutWidget);
         deleteButton->setObjectName(QStringLiteral("deleteButton"));
 
         verticalLayout_2->addWidget(deleteButton);
@@ -118,17 +151,17 @@ public:
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        childClass = new QLabel(widget);
+        childClass = new QLabel(layoutWidget);
         childClass->setObjectName(QStringLiteral("childClass"));
 
         verticalLayout->addWidget(childClass);
 
-        childList = new QListWidget(widget);
+        childList = new QListWidget(layoutWidget);
         childList->setObjectName(QStringLiteral("childList"));
 
         verticalLayout->addWidget(childList);
 
-        insertButton = new QPushButton(widget);
+        insertButton = new QPushButton(layoutWidget);
         insertButton->setObjectName(QStringLiteral("insertButton"));
 
         verticalLayout->addWidget(insertButton);
@@ -140,28 +173,17 @@ public:
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 1070, 30));
-        menuModify = new QMenu(menuBar);
-        menuModify->setObjectName(QStringLiteral("menuModify"));
-        menuDelete = new QMenu(menuBar);
-        menuDelete->setObjectName(QStringLiteral("menuDelete"));
         menuInsert = new QMenu(menuBar);
         menuInsert->setObjectName(QStringLiteral("menuInsert"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuInsert->menuAction());
-        menuBar->addAction(menuModify->menuAction());
-        menuBar->addAction(menuDelete->menuAction());
-        menuModify->addAction(actionModify_organization);
-        menuModify->addAction(actionModify_achievement);
-        menuModify->addAction(actionModify_contributor);
-        menuDelete->addAction(actionDelete_organization);
-        menuDelete->addAction(actionDelete_achievement);
-        menuDelete->addAction(actionDelete_contributor);
         menuInsert->addAction(actionInsert_organization);
-        menuInsert->addAction(actionInsert_achievement);
-        menuInsert->addAction(actionInsert_contributor);
 
         retranslateUi(MainWindow);
+
+        searchButton->setDefault(false);
+
 
         QMetaObject::connectSlotsByName(MainWindow);
     } // setupUi
@@ -178,15 +200,17 @@ public:
         actionInsert_organization->setText(QApplication::translate("MainWindow", "&Insert organization", Q_NULLPTR));
         actionInsert_achievement->setText(QApplication::translate("MainWindow", "I&nsert achievement", Q_NULLPTR));
         actionInsert_contributor->setText(QApplication::translate("MainWindow", "Insert &contributor", Q_NULLPTR));
+        searchButton->setText(QApplication::translate("MainWindow", "search", Q_NULLPTR));
+#ifndef QT_NO_SHORTCUT
+        searchButton->setShortcut(QApplication::translate("MainWindow", "Enter, Return", Q_NULLPTR));
+#endif // QT_NO_SHORTCUT
         QTreeWidgetItem *___qtreewidgetitem = treeWidget->headerItem();
         ___qtreewidgetitem->setText(0, QApplication::translate("MainWindow", "organizations", Q_NULLPTR));
         info_label->setText(QApplication::translate("MainWindow", "Information", Q_NULLPTR));
         deleteButton->setText(QApplication::translate("MainWindow", "delete", Q_NULLPTR));
         childClass->setText(QApplication::translate("MainWindow", "Achievements or Contributors", Q_NULLPTR));
         insertButton->setText(QApplication::translate("MainWindow", "insert", Q_NULLPTR));
-        menuModify->setTitle(QApplication::translate("MainWindow", "&Modify", Q_NULLPTR));
-        menuDelete->setTitle(QApplication::translate("MainWindow", "De&lete", Q_NULLPTR));
-        menuInsert->setTitle(QApplication::translate("MainWindow", "I&nsert", Q_NULLPTR));
+        menuInsert->setTitle(QApplication::translate("MainWindow", "organization &manage", Q_NULLPTR));
     } // retranslateUi
 
 };

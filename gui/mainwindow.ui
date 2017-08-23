@@ -14,24 +14,54 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>0</y>
+      <y>10</y>
       <width>1051</width>
       <height>591</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QTreeWidget" name="treeWidget">
-       <column>
-        <property name="text">
-         <string>organizations</string>
-        </property>
-       </column>
-      </widget>
+      <layout class="QVBoxLayout" name="verticalLayout_3"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLineEdit" name="searchLine"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="searchButton">
+           <property name="text">
+            <string>search</string>
+           </property>
+           <property name="shortcut">
+            <string>Enter, Return</string>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+           <property name="default">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="treeWidget">
+         <column>
+          <property name="text">
+           <string>organizations</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -87,33 +117,13 @@
      <height>30</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuModify">
-    <property name="title">
-     <string>&amp;Modify</string>
-    </property>
-    <addaction name="actionModify_organization"/>
-    <addaction name="actionModify_achievement"/>
-    <addaction name="actionModify_contributor"/>
-   </widget>
-   <widget class="QMenu" name="menuDelete">
-    <property name="title">
-     <string>De&amp;lete</string>
-    </property>
-    <addaction name="actionDelete_organization"/>
-    <addaction name="actionDelete_achievement"/>
-    <addaction name="actionDelete_contributor"/>
-   </widget>
    <widget class="QMenu" name="menuInsert">
     <property name="title">
-     <string>I&amp;nsert</string>
+     <string>organization &amp;manage</string>
     </property>
     <addaction name="actionInsert_organization"/>
-    <addaction name="actionInsert_achievement"/>
-    <addaction name="actionInsert_contributor"/>
    </widget>
    <addaction name="menuInsert"/>
-   <addaction name="menuModify"/>
-   <addaction name="menuDelete"/>
   </widget>
   <action name="actionModify_organization">
    <property name="text">

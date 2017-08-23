@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[13];
-    char stringdata0[175];
+    QByteArrayData data[16];
+    char stringdata0[232];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -43,14 +43,18 @@ QT_MOC_LITERAL(8, 74, 38), // "on_actionInsert_organization_..."
 QT_MOC_LITERAL(9, 113, 23), // "on_deleteButton_clicked"
 QT_MOC_LITERAL(10, 137, 23), // "on_insertButton_clicked"
 QT_MOC_LITERAL(11, 161, 6), // "accept"
-QT_MOC_LITERAL(12, 168, 6) // "reject"
+QT_MOC_LITERAL(12, 168, 6), // "reject"
+QT_MOC_LITERAL(13, 175, 23), // "on_searchButton_clicked"
+QT_MOC_LITERAL(14, 199, 26), // "on_childList_doubleClicked"
+QT_MOC_LITERAL(15, 226, 5) // "index"
 
     },
     "MainWindow\0setInfo\0\0QTreeWidgetItem*\0"
     "item\0num\0modifyInfo\0QListWidgetItem*\0"
     "on_actionInsert_organization_triggered\0"
     "on_deleteButton_clicked\0on_insertButton_clicked\0"
-    "accept\0reject"
+    "accept\0reject\0on_searchButton_clicked\0"
+    "on_childList_doubleClicked\0index"
 };
 #undef QT_MOC_LITERAL
 
@@ -60,7 +64,7 @@ static const uint qt_meta_data_MainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       9,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -68,13 +72,15 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    2,   49,    2, 0x08 /* Private */,
-       6,    1,   54,    2, 0x08 /* Private */,
-       8,    0,   57,    2, 0x08 /* Private */,
-       9,    0,   58,    2, 0x08 /* Private */,
-      10,    0,   59,    2, 0x08 /* Private */,
-      11,    0,   60,    2, 0x08 /* Private */,
-      12,    0,   61,    2, 0x08 /* Private */,
+       1,    2,   59,    2, 0x08 /* Private */,
+       6,    1,   64,    2, 0x08 /* Private */,
+       8,    0,   67,    2, 0x08 /* Private */,
+       9,    0,   68,    2, 0x08 /* Private */,
+      10,    0,   69,    2, 0x08 /* Private */,
+      11,    0,   70,    2, 0x08 /* Private */,
+      12,    0,   71,    2, 0x08 /* Private */,
+      13,    0,   72,    2, 0x08 /* Private */,
+      14,    1,   73,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 3, QMetaType::Int,    4,    5,
@@ -84,6 +90,8 @@ static const uint qt_meta_data_MainWindow[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QModelIndex,   15,
 
        0        // eod
 };
@@ -101,6 +109,8 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         case 4: _t->on_insertButton_clicked(); break;
         case 5: _t->accept(); break;
         case 6: _t->reject(); break;
+        case 7: _t->on_searchButton_clicked(); break;
+        case 8: _t->on_childList_doubleClicked((*reinterpret_cast< const QModelIndex(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -131,13 +141,13 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 9)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 9;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 9)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 9;
     }
     return _id;
 }

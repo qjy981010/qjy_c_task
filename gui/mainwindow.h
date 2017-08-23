@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QMessageBox>
+#include <QShortcut>
 #include "mylistitem.h"
 
 extern "C"
@@ -38,6 +39,9 @@ private slots:
     void on_insertButton_clicked();
     void accept();
     void reject();
+    void on_searchButton_clicked();
+
+    void on_childList_doubleClicked(const QModelIndex &index);
 
 private:
     QTreeWidgetItem* cur_item;

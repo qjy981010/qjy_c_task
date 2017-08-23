@@ -12,8 +12,11 @@ MainWindow::MainWindow(QWidget *parent) :
     infolist = ui->infoList;
     childlist = ui->childList;
     connect(infolist, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyInfo(QListWidgetItem*)));
+//    connect(infolist, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(childClicked(QListWidgetItem*)));
     ui->deleteButton->setDisabled(1);
     ui->insertButton->setDisabled(1);
+    QShortcut *shortcut = new QShortcut(QKeySequence("Return"), this);
+    QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_searchButton_clicked()));
 }
 
 MainWindow::~MainWindow()
@@ -42,26 +45,6 @@ void MainWindow::initTree()
         }
     }
 }
-
-//void MainWindow::addMyItem(QListWidget* list, QString key, QString val)
-//{
-//    QListWidgetItem* newitem = new QListWidgetItem(infolist);
-//    infolist->addItem(newitem);
-//    QWidget* myitem = new QWidget;
-//    QHBoxLayout* hbl = new QHBoxLayout(myitem);
-//    QLabel* key_lab = new QLabel(key);
-//    QLabel* val_lab = new QLabel(val);
-//    QPushButton* modifyButton = new QPushButton("modify");
-
-//    hbl->addWidget(key_lab);
-//    hbl->addWidget(val_lab);
-//    hbl->addWidget(modifyButton);
-//    hbl->setSizeConstraint( QLayout::SetFixedSize );
-//    myitem->setLayout(hbl);
-//    newitem->setSizeHint(myitem->sizeHint());
-//    infolist->setItemWidget(newitem, myitem);
-//    qDebug() << "add info";
-//}
 
 void MainWindow::setInfo(QTreeWidgetItem* item, int num)
 {
@@ -134,7 +117,7 @@ void MainWindow::setInfo(QTreeWidgetItem* item, int num)
     }
 }
 
-void MainWindow::modifyInfo(QListWidgetItem* item) // 需要字长限制
+void MainWindow::modifyInfo(QListWidgetItem* item)
 {
     QStringList pieces = item->text().split( ": " );
     QString key = pieces.value(0);
@@ -150,13 +133,48 @@ void MainWindow::modifyInfo(QListWidgetItem* item) // 需要字长限制
         {
             if (cur_item->parent()->parent())
             {
+                if (infolist->row(item) == 0) {
+                    for (contr_node* it = this_achi->contributors; it; it = it->next)
+                    {
+                        if (!strcmp(newval.toLatin1().data(), it->info.name))
+                        {
+                            QMessageBox::critical(0, "Error", newval + " has existed !");
+                            delete modifyDialog;
+                            return;
+                        }
+                    }
+                }
                 modify_contr(this_contr, infolist->row(item), newval.toLatin1().data(), newval.toInt());
             }
-            else {
+            else
+            {
+                if (infolist->row(item) == 1) {
+                    for (achi_node* it = this_org->achievements; it; it = it->next)
+                    {
+                        if (!strcmp(newval.toLatin1().data(), it->info.result_name))
+                        {
+                            QMessageBox::critical(0, "Error", newval + " has existed !");
+                            delete modifyDialog;
+                            return;
+                        }
+                    }
+                }
                 modify_achi(this_achi, infolist->row(item), newval.toLatin1().data(), newval.toInt());
             }
         }
-        else {
+        else
+        {
+            if (infolist->row(item) == 1) {
+                for (org_node* it = org_list_head; it; it = it->next)
+                {
+                    if (!strcmp(newval.toLatin1().data(), it->info.org_name))
+                    {
+                        QMessageBox::critical(0, "Error", newval + " has existed !");
+                        delete modifyDialog;
+                        return;
+                    }
+                }
+            }
             modify_org(this_org, infolist->row(item), newval.toLatin1().data());
         }
     }
@@ -394,4 +412,48 @@ void MainWindow::on_insertButton_clicked()
     delete okbtn;
     delete cancelbtn;
     delete insertDialog;
+}
+
+void MainWindow::on_searchButton_clicked()
+{
+    char searchstr[40];
+    strcpy(searchstr, ui->searchLine->text().toLatin1().data());
+    int min = INT_MAX, dis;
+    QTreeWidgetItem* rightItem = 0;
+    if (strlen(searchstr) > 0)
+    {
+        QTreeWidgetItemIterator it(ui->treeWidget);
+        while (*it)
+        {
+            dis = dl_distance((*it)->text(0).toLatin1().data(), searchstr);
+            qDebug() << (*it)->text(0) << "  distance: " << dis;
+            if (dis < min)
+            {
+                min = dis;
+                rightItem = *it;
+                if (dis == 0) break;
+            }
+            ++it;
+        }
+        if (!rightItem) return;
+        ui->treeWidget->itemClicked(rightItem, 0);
+        if (rightItem->parent())
+        {
+            if (rightItem->parent()->parent())
+                ui->treeWidget->expandItem(rightItem->parent()->parent());
+            ui->treeWidget->expandItem(rightItem->parent());
+        }
+    }
+}
+
+void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
+{
+    QString curstr = childlist->currentItem()->text();
+    for (int i = 0; i < cur_item->childCount(); ++i)
+    {
+        if (cur_item->child(i)->text(0) == curstr)
+        {
+            ui->treeWidget->itemClicked(cur_item->child(i), 0);
+        }
+    }
 }

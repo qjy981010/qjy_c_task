@@ -1,6 +1,10 @@
 #ifndef LIST_H_
 #define LIST_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 /*contributor information*/
 typedef struct contributor_info{
 	char name[21];
@@ -74,5 +78,7 @@ void load_data(char* org_file, char* achi_file, char* contr_file);
 org_node* get_org_by_name(char* org_name, org_node** pre_node);
 achi_node* get_achi_by_name(char* org_name, char* achi_name, achi_node** pre_node, org_node** cur_org);
 contr_node* get_contr_by_name(char* org_name, char* achi_name, char* contr_name, contr_node** pre_node, achi_node** cur_achi);
+int min(int a, int b);
+int dl_distance(char* p_string1, char* p_string2);
 
 #endif

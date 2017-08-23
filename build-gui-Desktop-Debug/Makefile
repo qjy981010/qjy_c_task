@@ -81,6 +81,7 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/modules/qt_Attica.pri \
 		/usr/lib/qt/mkspecs/modules/qt_BluezQt.pri \
 		/usr/lib/qt/mkspecs/modules/qt_CalendarSupport.pri \
+		/usr/lib/qt/mkspecs/modules/qt_ContactEditor.pri \
 		/usr/lib/qt/mkspecs/modules/qt_EventViews.pri \
 		/usr/lib/qt/mkspecs/modules/qt_FollowupReminder.pri \
 		/usr/lib/qt/mkspecs/modules/qt_GrantleeTheme.pri \
@@ -368,6 +369,7 @@ Makefile: ../gui/gui.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mk
 		/usr/lib/qt/mkspecs/modules/qt_Attica.pri \
 		/usr/lib/qt/mkspecs/modules/qt_BluezQt.pri \
 		/usr/lib/qt/mkspecs/modules/qt_CalendarSupport.pri \
+		/usr/lib/qt/mkspecs/modules/qt_ContactEditor.pri \
 		/usr/lib/qt/mkspecs/modules/qt_EventViews.pri \
 		/usr/lib/qt/mkspecs/modules/qt_FollowupReminder.pri \
 		/usr/lib/qt/mkspecs/modules/qt_GrantleeTheme.pri \
@@ -643,6 +645,7 @@ Makefile: ../gui/gui.pro /usr/lib/qt/mkspecs/linux-g++/qmake.conf /usr/lib/qt/mk
 /usr/lib/qt/mkspecs/modules/qt_Attica.pri:
 /usr/lib/qt/mkspecs/modules/qt_BluezQt.pri:
 /usr/lib/qt/mkspecs/modules/qt_CalendarSupport.pri:
+/usr/lib/qt/mkspecs/modules/qt_ContactEditor.pri:
 /usr/lib/qt/mkspecs/modules/qt_EventViews.pri:
 /usr/lib/qt/mkspecs/modules/qt_FollowupReminder.pri:
 /usr/lib/qt/mkspecs/modules/qt_GrantleeTheme.pri:
