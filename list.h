@@ -50,6 +50,9 @@ typedef struct organization_info {
 	char chairman[21];
 	char phone_num[21];
 	int achi_num;
+	int national_achi_num;
+	int provincial_achi_num;
+	int municipal_achi_num;
 } org_info;
 
 typedef struct organization_node {
@@ -60,16 +63,17 @@ typedef struct organization_node {
 
 extern org_node* org_list_head;
 
-char insert_org(char* id, char* name, char* chairman, char* phone_num);
-char insert_achi(org_node* org_ptr, char* id, char* name, char* field, char* org,
+void trimncpy(char* from, char* target, int n);
+org_node* insert_org(char* id, char* name, char* chairman, char* phone_num);
+achi_node* insert_achi(org_node* org_ptr, char* id, char* name, char* field, char* org,
 		char* mvp, char* price_name, char* price_class, int price_ranking);
-char insert_contr(achi_node* achi_ptr, char* name, char* id, char* org,
+contr_node* insert_contr(achi_node* achi_ptr, char* name, char* id, char* org,
 		char* result_name, char gender, int age, char* job_title, int ranking);
 char insert_achi_node(achi_node* new_node, char* new_val);
 char insert_contr_node(contr_node* new_node, org_node* org, char* new_val);;
-void modify_org(org_node* org_ptr, char key, char* new_val);
-void modify_achi(achi_node* achi_ptr, char key, char* new_val, int new_int);
-void modify_contr(contr_node* contr_ptr, char key, char* new_val, int new_int);
+char modify_org(org_node* org_ptr, char key, char* new_val);
+char modify_achi(achi_node* achi_ptr, char key, char* new_val, int new_int);
+char modify_contr(contr_node* contr_ptr, char key, char* new_val, int new_int);
 void delete_org(org_node* org_ptr, org_node* pre_org_ptr);
 void delete_achi(achi_node* achi_ptr, achi_node* pre_achi_ptr, org_node* org_ptr);
 void delete_contr(contr_node* contr_ptr, contr_node* pre_contr_ptr, achi_node* achi_ptr);
@@ -80,5 +84,9 @@ achi_node* get_achi_by_name(char* org_name, char* achi_name, achi_node** pre_nod
 contr_node* get_contr_by_name(char* org_name, char* achi_name, char* contr_name, contr_node** pre_node, achi_node** cur_achi);
 int min(int a, int b);
 int dl_distance(char* p_string1, char* p_string2);
+void sort_orgs_if_needed(org_node* cur_org, org_node* pre_org);
+contr_node* filter_by_age(int from, int to);
+contr_node* filter_by_age_MVC(int from, int to);
+void delete_contr_list(contr_node* head);
 
 #endif

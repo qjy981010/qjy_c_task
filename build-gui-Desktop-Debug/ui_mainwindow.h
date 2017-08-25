@@ -31,15 +31,10 @@ QT_BEGIN_NAMESPACE
 class Ui_MainWindow
 {
 public:
-    QAction *actionModify_organization;
-    QAction *actionModify_achievement;
-    QAction *actionModify_contributor;
-    QAction *actionDelete_organization;
-    QAction *actionDelete_achievement;
-    QAction *actionDelete_contributor;
     QAction *actionInsert_organization;
-    QAction *actionInsert_achievement;
-    QAction *actionInsert_contributor;
+    QAction *actionSort_organizations;
+    QAction *actionsearch_among_MVC;
+    QAction *actionSearch_among_contributors;
     QWidget *centralWidget;
     QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout;
@@ -59,30 +54,22 @@ public:
     QPushButton *insertButton;
     QMenuBar *menuBar;
     QMenu *menuInsert;
+    QMenu *menuStatistics;
+    QMenu *menu_filter_by_age;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QStringLiteral("MainWindow"));
         MainWindow->resize(1070, 640);
-        actionModify_organization = new QAction(MainWindow);
-        actionModify_organization->setObjectName(QStringLiteral("actionModify_organization"));
-        actionModify_achievement = new QAction(MainWindow);
-        actionModify_achievement->setObjectName(QStringLiteral("actionModify_achievement"));
-        actionModify_contributor = new QAction(MainWindow);
-        actionModify_contributor->setObjectName(QStringLiteral("actionModify_contributor"));
-        actionDelete_organization = new QAction(MainWindow);
-        actionDelete_organization->setObjectName(QStringLiteral("actionDelete_organization"));
-        actionDelete_achievement = new QAction(MainWindow);
-        actionDelete_achievement->setObjectName(QStringLiteral("actionDelete_achievement"));
-        actionDelete_contributor = new QAction(MainWindow);
-        actionDelete_contributor->setObjectName(QStringLiteral("actionDelete_contributor"));
         actionInsert_organization = new QAction(MainWindow);
         actionInsert_organization->setObjectName(QStringLiteral("actionInsert_organization"));
-        actionInsert_achievement = new QAction(MainWindow);
-        actionInsert_achievement->setObjectName(QStringLiteral("actionInsert_achievement"));
-        actionInsert_contributor = new QAction(MainWindow);
-        actionInsert_contributor->setObjectName(QStringLiteral("actionInsert_contributor"));
+        actionSort_organizations = new QAction(MainWindow);
+        actionSort_organizations->setObjectName(QStringLiteral("actionSort_organizations"));
+        actionsearch_among_MVC = new QAction(MainWindow);
+        actionsearch_among_MVC->setObjectName(QStringLiteral("actionsearch_among_MVC"));
+        actionSearch_among_contributors = new QAction(MainWindow);
+        actionSearch_among_contributors->setObjectName(QStringLiteral("actionSearch_among_contributors"));
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         layoutWidget = new QWidget(centralWidget);
@@ -121,6 +108,7 @@ public:
 
         treeWidget = new QTreeWidget(layoutWidget);
         treeWidget->setObjectName(QStringLiteral("treeWidget"));
+        treeWidget->setSortingEnabled(false);
 
         verticalLayout_4->addWidget(treeWidget);
 
@@ -175,10 +163,19 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1070, 30));
         menuInsert = new QMenu(menuBar);
         menuInsert->setObjectName(QStringLiteral("menuInsert"));
+        menuStatistics = new QMenu(menuBar);
+        menuStatistics->setObjectName(QStringLiteral("menuStatistics"));
+        menu_filter_by_age = new QMenu(menuStatistics);
+        menu_filter_by_age->setObjectName(QStringLiteral("menu_filter_by_age"));
         MainWindow->setMenuBar(menuBar);
 
         menuBar->addAction(menuInsert->menuAction());
+        menuBar->addAction(menuStatistics->menuAction());
         menuInsert->addAction(actionInsert_organization);
+        menuInsert->addAction(actionSort_organizations);
+        menuStatistics->addAction(menu_filter_by_age->menuAction());
+        menu_filter_by_age->addAction(actionsearch_among_MVC);
+        menu_filter_by_age->addAction(actionSearch_among_contributors);
 
         retranslateUi(MainWindow);
 
@@ -191,15 +188,10 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-        actionModify_organization->setText(QApplication::translate("MainWindow", "&Modify organization", Q_NULLPTR));
-        actionModify_achievement->setText(QApplication::translate("MainWindow", "M&odify achievement", Q_NULLPTR));
-        actionModify_contributor->setText(QApplication::translate("MainWindow", "Modify &contributor", Q_NULLPTR));
-        actionDelete_organization->setText(QApplication::translate("MainWindow", "&Delete organization", Q_NULLPTR));
-        actionDelete_achievement->setText(QApplication::translate("MainWindow", "D&elete achievement", Q_NULLPTR));
-        actionDelete_contributor->setText(QApplication::translate("MainWindow", "Delete &contributor", Q_NULLPTR));
-        actionInsert_organization->setText(QApplication::translate("MainWindow", "&Insert organization", Q_NULLPTR));
-        actionInsert_achievement->setText(QApplication::translate("MainWindow", "I&nsert achievement", Q_NULLPTR));
-        actionInsert_contributor->setText(QApplication::translate("MainWindow", "Insert &contributor", Q_NULLPTR));
+        actionInsert_organization->setText(QApplication::translate("MainWindow", "&New organization", Q_NULLPTR));
+        actionSort_organizations->setText(QApplication::translate("MainWindow", "&Sort organizations", Q_NULLPTR));
+        actionsearch_among_MVC->setText(QApplication::translate("MainWindow", "Search among MVC", Q_NULLPTR));
+        actionSearch_among_contributors->setText(QApplication::translate("MainWindow", "Search among contributors", Q_NULLPTR));
         searchButton->setText(QApplication::translate("MainWindow", "search", Q_NULLPTR));
 #ifndef QT_NO_SHORTCUT
         searchButton->setShortcut(QApplication::translate("MainWindow", "Enter, Return", Q_NULLPTR));
@@ -210,7 +202,9 @@ public:
         deleteButton->setText(QApplication::translate("MainWindow", "delete", Q_NULLPTR));
         childClass->setText(QApplication::translate("MainWindow", "Achievements or Contributors", Q_NULLPTR));
         insertButton->setText(QApplication::translate("MainWindow", "insert", Q_NULLPTR));
-        menuInsert->setTitle(QApplication::translate("MainWindow", "organization &manage", Q_NULLPTR));
+        menuInsert->setTitle(QApplication::translate("MainWindow", "&Manage", Q_NULLPTR));
+        menuStatistics->setTitle(QApplication::translate("MainWindow", "Statistics", Q_NULLPTR));
+        menu_filter_by_age->setTitle(QApplication::translate("MainWindow", "&filter by age", Q_NULLPTR));
     } // retranslateUi
 
 };

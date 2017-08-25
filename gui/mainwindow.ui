@@ -54,6 +54,9 @@
        </item>
        <item>
         <widget class="QTreeWidget" name="treeWidget">
+         <property name="sortingEnabled">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string>organizations</string>
@@ -119,55 +122,45 @@
    </property>
    <widget class="QMenu" name="menuInsert">
     <property name="title">
-     <string>organization &amp;manage</string>
+     <string>&amp;Manage</string>
     </property>
     <addaction name="actionInsert_organization"/>
+    <addaction name="actionSort_organizations"/>
+   </widget>
+   <widget class="QMenu" name="menuStatistics">
+    <property name="title">
+     <string>Statistics</string>
+    </property>
+    <widget class="QMenu" name="menu_filter_by_age">
+     <property name="title">
+      <string>&amp;filter by age</string>
+     </property>
+     <addaction name="actionsearch_among_MVC"/>
+     <addaction name="actionSearch_among_contributors"/>
+    </widget>
+    <addaction name="menu_filter_by_age"/>
    </widget>
    <addaction name="menuInsert"/>
+   <addaction name="menuStatistics"/>
   </widget>
-  <action name="actionModify_organization">
-   <property name="text">
-    <string>&amp;Modify organization</string>
-   </property>
-  </action>
-  <action name="actionModify_achievement">
-   <property name="text">
-    <string>M&amp;odify achievement</string>
-   </property>
-  </action>
-  <action name="actionModify_contributor">
-   <property name="text">
-    <string>Modify &amp;contributor</string>
-   </property>
-  </action>
-  <action name="actionDelete_organization">
-   <property name="text">
-    <string>&amp;Delete organization</string>
-   </property>
-  </action>
-  <action name="actionDelete_achievement">
-   <property name="text">
-    <string>D&amp;elete achievement</string>
-   </property>
-  </action>
-  <action name="actionDelete_contributor">
-   <property name="text">
-    <string>Delete &amp;contributor</string>
-   </property>
-  </action>
   <action name="actionInsert_organization">
    <property name="text">
-    <string>&amp;Insert organization</string>
+    <string>&amp;New organization</string>
    </property>
   </action>
-  <action name="actionInsert_achievement">
+  <action name="actionSort_organizations">
    <property name="text">
-    <string>I&amp;nsert achievement</string>
+    <string>&amp;Sort organizations</string>
    </property>
   </action>
-  <action name="actionInsert_contributor">
+  <action name="actionsearch_among_MVC">
    <property name="text">
-    <string>Insert &amp;contributor</string>
+    <string>Search among MVC</string>
+   </property>
+  </action>
+  <action name="actionSearch_among_contributors">
+   <property name="text">
+    <string>Search among contributors</string>
    </property>
   </action>
  </widget>

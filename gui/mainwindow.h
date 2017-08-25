@@ -12,6 +12,8 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QShortcut>
+#include <QComboBox>
+#include <QTextEdit>
 #include "mylistitem.h"
 
 extern "C"
@@ -43,9 +45,15 @@ private slots:
 
     void on_childList_doubleClicked(const QModelIndex &index);
 
+    void on_actionSort_organizations_triggered();
+
+    void on_actionSearch_among_contributors_triggered();
+
+    void on_actionsearch_among_MVC_triggered();
+
 private:
     QTreeWidgetItem* cur_item;
-    QDialog* insertDialog;
+    QDialog* myDialog;
     org_node* cur_org;
     achi_node* cur_achi;
     org_node* pre_org;
@@ -58,6 +66,7 @@ private:
     QListWidget* infolist;
     QListWidget* childlist;
     void initTree();
+    void resetInfo();
     // void addMyItem(QListWidget* list, QString key, QString val);
 };
 
