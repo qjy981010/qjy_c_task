@@ -212,11 +212,11 @@ void delete_org(org_node* org_ptr, org_node* pre_org_ptr)
         {
             t_contr_ptr = contr_ptr->next;
             free(contr_ptr);
-            contr_ptr = t_contr_ptr->next;
+            contr_ptr = t_contr_ptr;
         }
         t_achi_ptr = achi_ptr->next;
         free(achi_ptr);
-        achi_ptr = t_achi_ptr->next;
+        achi_ptr = t_achi_ptr;
     }
     if (pre_org_ptr) pre_org_ptr->next = org_ptr->next;
     else org_list_head = org_ptr->next;
@@ -231,7 +231,7 @@ void delete_achi(achi_node* achi_ptr, achi_node* pre_achi_ptr, org_node* org_ptr
     {
         t_contr_ptr = contr_ptr->next;
         free(contr_ptr);
-        contr_ptr = t_contr_ptr->next;
+        contr_ptr = t_contr_ptr;
     }
     if (pre_achi_ptr) pre_achi_ptr->next = achi_ptr->next;
     else org_ptr->achievements = achi_ptr->next;
@@ -250,7 +250,7 @@ void delete_contr(contr_node* contr_ptr, contr_node* pre_contr_ptr, achi_node* a
 }
 
 
-void write_data(char* org_file, char* achi_file, char* contr_file)
+char write_data(char* org_file, char* achi_file, char* contr_file)
 {
     FILE* fp_org = fopen(org_file, "wb");
     FILE* fp_achi = fopen(achi_file, "wb");
@@ -275,14 +275,16 @@ void write_data(char* org_file, char* achi_file, char* contr_file)
         fclose(fp_org);
         fclose(fp_achi);
         fclose(fp_contr);
+        return 0;
     }
     else
     {
         fprintf(stderr, "fail to save the data!\n");
+        return 1;
     }
 }
 
-void load_data(char* org_file, char* achi_file, char* contr_file)
+char load_data(char* org_file, char* achi_file, char* contr_file)
 {
     FILE* fp_org = fopen(org_file, "rb");
     FILE* fp_achi = fopen(achi_file, "rb");
@@ -294,6 +296,7 @@ void load_data(char* org_file, char* achi_file, char* contr_file)
         {
             org_node* new_org = (org_node*)malloc(sizeof(org_node));
             if (fread(&new_org->info, sizeof(org_info), 1, fp_org) != 1) break;
+            new_org->next = new_org->achievements = 0;
             if (last_org)
             {
                 last_org->next = new_org;
@@ -308,6 +311,7 @@ void load_data(char* org_file, char* achi_file, char* contr_file)
             {
                 achi_node* new_achi = (achi_node*)malloc(sizeof(achi_node));
                 fread(&new_achi->info, sizeof(achi_info), 1, fp_achi);
+                new_achi->next = new_achi->contributors = 0;
                 new_achi->next = new_org->achievements;
                 new_org->achievements = new_achi;
                 int j = 0;
@@ -315,6 +319,7 @@ void load_data(char* org_file, char* achi_file, char* contr_file)
                 {
                     contr_node* new_contr = (contr_node*)malloc(sizeof(contr_node));
                     fread(&new_contr->info, sizeof(contr_info), 1, fp_contr);
+                    new_contr->next = 0;
                     new_contr->next = new_achi->contributors;
                     new_achi->contributors = new_contr;
                 }
@@ -323,10 +328,13 @@ void load_data(char* org_file, char* achi_file, char* contr_file)
         fclose(fp_org);
         fclose(fp_achi);
         fclose(fp_contr);
+        return 0;
     }
     else
     {
+        fprintf(stderr, "%s %s %s\n", org_file, achi_file, contr_file);
         fprintf(stderr, "fail to load the data!\n");
+        return 1;
     }
 }
 
@@ -532,3 +540,28 @@ void delete_contr_list(contr_node* head)
     }
 }
 
+void delall()
+{
+    org_node* it_org_ptr = org_list_head;
+    org_node* temp_org;
+    for (; it_org_ptr; it_org_ptr = temp_org)
+    {
+        temp_org = it_org_ptr->next;
+        achi_node* it_achi_ptr = it_org_ptr->achievements;
+        achi_node* temp_achi;
+        for (; it_achi_ptr; it_achi_ptr = temp_achi)
+        {
+            temp_achi = it_achi_ptr->next;
+            contr_node* it_contr_ptr = it_achi_ptr->contributors;
+            contr_node* temp_contr;
+            for (; it_contr_ptr; it_contr_ptr = temp_contr)
+            {
+                temp_contr = it_contr_ptr->next;
+                free(it_contr_ptr);
+            }
+            free(it_achi_ptr);
+        }
+        free(it_org_ptr);
+    }
+    org_list_head = 0;
+}

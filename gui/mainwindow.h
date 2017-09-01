@@ -14,6 +14,12 @@
 #include <QShortcut>
 #include <QComboBox>
 #include <QTextEdit>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QFile>
+#include <QFileDialog>
+#include <QCloseEvent>
+#include <fstream>
 #include "mylistitem.h"
 
 extern "C"
@@ -34,7 +40,8 @@ public:
     ~MainWindow();
 
 private slots:
-    void setInfo(QTreeWidgetItem* item, int num);
+    void closeEvent(QCloseEvent *event);
+    void setInfo(QTreeWidgetItem* item);
     void modifyInfo(QListWidgetItem* item);
     void on_actionInsert_organization_triggered();
     void on_deleteButton_clicked();
@@ -51,6 +58,16 @@ private slots:
 
     void on_actionsearch_among_MVC_triggered();
 
+    void on_actionHelp_document_triggered();
+
+    void on_actionAbout_us_triggered();
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
+    void on_actionClose_triggered();
+
 private:
     QTreeWidgetItem* cur_item;
     QDialog* myDialog;
@@ -65,6 +82,8 @@ private:
     Ui::MainWindow *ui;
     QListWidget* infolist;
     QListWidget* childlist;
+    QString dir = "";
+    bool ischanged = 0;
     void initTree();
     void resetInfo();
     // void addMyItem(QListWidget* list, QString key, QString val);

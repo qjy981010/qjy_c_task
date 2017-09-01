@@ -77,8 +77,8 @@ char modify_contr(contr_node* contr_ptr, char key, char* new_val, int new_int);
 void delete_org(org_node* org_ptr, org_node* pre_org_ptr);
 void delete_achi(achi_node* achi_ptr, achi_node* pre_achi_ptr, org_node* org_ptr);
 void delete_contr(contr_node* contr_ptr, contr_node* pre_contr_ptr, achi_node* achi_ptr);
-void write_data(char* org_file, char* achi_file, char* contr_file);
-void load_data(char* org_file, char* achi_file, char* contr_file);
+char write_data(char* org_file, char* achi_file, char* contr_file);
+char load_data(char* org_file, char* achi_file, char* contr_file);
 org_node* get_org_by_name(char* org_name, org_node** pre_node);
 achi_node* get_achi_by_name(char* org_name, char* achi_name, achi_node** pre_node, org_node** cur_org);
 contr_node* get_contr_by_name(char* org_name, char* achi_name, char* contr_name, contr_node** pre_node, achi_node** cur_achi);
@@ -88,5 +88,6 @@ void sort_orgs_if_needed(org_node* cur_org, org_node* pre_org);
 contr_node* filter_by_age(int from, int to);
 contr_node* filter_by_age_MVC(int from, int to);
 void delete_contr_list(contr_node* head);
+void delall();
 
 #endif

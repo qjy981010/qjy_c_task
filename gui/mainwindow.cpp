@@ -8,14 +8,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     this->setWindowTitle("Achievement Manager");
     ui->setupUi(this);
-    connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(setInfo(QTreeWidgetItem*,int)));
     initTree();
-    // ui->treeWidget->setSortingEnabled(true);
-    // ui->treeWidget->sortByColumn(0);
-    // ui->treeWidget->sortItems(0, Qt::DescendingOrder);
     infolist = ui->infoList;
     childlist = ui->childList;
     connect(infolist, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(modifyInfo(QListWidgetItem*)));
+    connect(ui->treeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(setInfo(QTreeWidgetItem*)));
     ui->deleteButton->setDisabled(1);
     ui->insertButton->setDisabled(1);
     QShortcut *shortcut = new QShortcut(QKeySequence("Return"), this);
@@ -40,6 +37,7 @@ void MainWindow::initTree()
         achi_node* it_achi_ptr = it_org_ptr->achievements;
         for (; it_achi_ptr; it_achi_ptr = it_achi_ptr->next) {
             achi = new QTreeWidgetItem(org);
+            qDebug() << it_achi_ptr << " " << achi;
             achi->setText(0, it_achi_ptr->info.result_name);
             contr_node* it_contr_ptr = it_achi_ptr->contributors;
             for (; it_contr_ptr; it_contr_ptr = it_contr_ptr->next) {
@@ -97,9 +95,10 @@ void MainWindow::resetInfo()
     }
 }
 
-void MainWindow::setInfo(QTreeWidgetItem* item, int num)
+void MainWindow::setInfo(QTreeWidgetItem* item)
 {
     cur_item = item;
+    ui->treeWidget->expandItem(item);
     if (item->parent()) {
         if (item->parent()->parent()) { // contributor
             qDebug() << "contributor item clicked";
@@ -197,6 +196,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
     bool dialogResult;
     char rightmodify = 0;
     int index = infolist->row(item);
+    ischanged = 1;
     if (cur_item->parent())
     {
         if (cur_item->parent()->parent())
@@ -344,9 +344,51 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
     else if (rightmodify == 2) item->setText(key + QString(": " + QString::number(newval.toInt())));
 }
 
+void MainWindow::accept()
+{
+    myDialog->accept();
+}
+
+void MainWindow::reject()
+{
+    myDialog->reject();
+}
+
+void MainWindow::on_deleteButton_clicked()
+{
+    qDebug() << "delete button clicked";
+    ischanged = 1;
+    if (QMessageBox::Yes == QMessageBox::warning(NULL, "warning", "Do you really want to delete "+cur_item->text(0)+"?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
+    {
+        if (cur_item->parent())
+        {
+            if (cur_item->parent()->parent())
+            {
+                delete_contr(this_contr, pre_contr, cur_achi);
+                delete this_contr;
+            }
+            else
+            {
+                delete_achi(this_achi, pre_achi, cur_org);
+                sort_orgs_if_needed(cur_org->next, cur_org);
+            }
+        }
+        else
+        {
+            delete_org(this_org, pre_org);
+        }
+        infolist->clear();
+        childlist->clear();
+        delete cur_item;
+        ui->insertButton->setDisabled(1);
+        ui->deleteButton->setDisabled(1);
+    }
+}
+
 void MainWindow::on_actionInsert_organization_triggered()
 {
     qDebug() << "insert org";
+    ischanged = 1;
     myDialog = new QDialog;
     QPushButton okbtn("ok");
     QPushButton cancelbtn("cancel");
@@ -390,46 +432,6 @@ void MainWindow::on_actionInsert_organization_triggered()
     }
 }
 
-void MainWindow::on_deleteButton_clicked()
-{
-    qDebug() << "delete button clicked";
-    if (QMessageBox::Yes == QMessageBox::warning(NULL, "warning", "Content", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
-    {
-        if (cur_item->parent())
-        {
-            if (cur_item->parent()->parent())
-            {
-                delete_contr(this_contr, pre_contr, cur_achi);
-                delete this_contr;
-            }
-            else
-            {
-                delete_achi(this_achi, pre_achi, cur_org);
-                sort_orgs_if_needed(cur_org->next, cur_org);
-            }
-        }
-        else
-        {
-            delete_org(this_org, pre_org);
-        }
-        infolist->clear();
-        childlist->clear();
-        delete cur_item;
-        ui->insertButton->setDisabled(1);
-        ui->deleteButton->setDisabled(1);
-    }
-}
-
-void MainWindow::accept()
-{
-    myDialog->accept();
-}
-
-void MainWindow::reject()
-{
-    myDialog->reject();
-}
-
 void MainWindow::on_insertButton_clicked()
 {
     qDebug() << "insert button clicked";
@@ -439,6 +441,7 @@ void MainWindow::on_insertButton_clicked()
     connect(&okbtn, SIGNAL(clicked()), this, SLOT(accept()));
     connect(&cancelbtn, SIGNAL(clicked()), this, SLOT(reject()));
     QGridLayout insertlayout;
+    ischanged = 1;
     if (cur_item->parent()) { // insert contributor
         qDebug() << "insert contributor";
         myDialog->setWindowTitle("insert new contributor");
@@ -553,6 +556,7 @@ void MainWindow::on_insertButton_clicked()
         }
     }
     resetInfo();
+    ui->treeWidget->expandItem(cur_item);
 }
 
 void MainWindow::on_searchButton_clicked()
@@ -594,7 +598,8 @@ void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
     {
         if (cur_item->child(i)->text(0) == curstr)
         {
-            ui->treeWidget->expandItem(cur_item);
+            cur_item->setSelected(false);
+            cur_item->child(i)->setSelected(true);
             ui->treeWidget->itemClicked(cur_item->child(i), 0);
         }
     }
@@ -631,13 +636,13 @@ void MainWindow::on_actionSearch_among_contributors_triggered()
         contr_node* head = filter_by_age(fromline.text().toInt(), toline.text().toInt());
         if (!head)
         {
-            QMessageBox::information(this, "no result", "no contributor aged from " + fromline.text() + " to " + toline.text());
+            QMessageBox::information(this, "no result", "No contributor aged from " + fromline.text() + " to " + toline.text());
         }
         QString info = "";
         for (contr_node* it = head; it; it = it->next)
         {
             info += QString("name: %1\nid: %2\norganization: %3\nachievement: %4\ngender: %5\nage: %6\njob title: %7\nachievement ranking: %8\n\n").arg(
-                        it->info.name, it->info.id_num, it->info.org, it->info.result_name, &(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
+                        it->info.name, it->info.id_num, it->info.org, it->info.result_name, QString(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
         }
         myDialog = new QDialog;
         myDialog->setWindowTitle("Filter by age from " + fromline.text() + " to " + toline.text());
@@ -682,15 +687,132 @@ void MainWindow::on_actionsearch_among_MVC_triggered()
         for (contr_node* it = head; it; it = it->next)
         {
             info += QString("name: %1\nid: %2\norganization: %3\nachievement: %4\ngender: %5\nage: %6\njob title: %7\nachievement ranking: %8\n\n").arg(
-                        it->info.name, it->info.id_num, it->info.org, it->info.result_name, &(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
+                        it->info.name, it->info.id_num, it->info.org, it->info.result_name, QString(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
         }
         myDialog = new QDialog;
         myDialog->setWindowTitle("Filter by age from " + fromline.text() + " to " + toline.text());
         QTextEdit textedit;
         textedit.setText(info);
+        textedit.setReadOnly(true);
         filterlayout.addWidget(&textedit, 0, 0, 1, 4);
         myDialog->setLayout(&filterlayout);
         myDialog->exec();
         delete_contr_list(head);
+    }
+}
+
+void MainWindow::on_actionHelp_document_triggered()
+{
+    QFile documentfile("../README.md");
+    if (documentfile.open(QFile::ReadOnly)) {
+        QTextStream in(&documentfile);
+        QString document = in.readAll();
+        myDialog = new QDialog;
+        QGridLayout documentlayout;
+        QPushButton okbtn("ok");
+        QPushButton cancelbtn("cancel");
+        connect(&okbtn, SIGNAL(clicked()), this, SLOT(accept()));
+        connect(&cancelbtn, SIGNAL(clicked()), this, SLOT(reject()));
+        myDialog->setWindowTitle("Help document");
+        QTextEdit textedit;
+        textedit.setText(document);
+        textedit.setReadOnly(true);
+        documentlayout.addWidget(&textedit, 0, 0, 1, 4);
+        documentlayout.addWidget(&okbtn, 1, 0, 1, 2);
+        documentlayout.addWidget(&cancelbtn, 1, 2, 1, 2);
+        myDialog->setLayout(&documentlayout);
+        myDialog->exec();
+    }
+    else
+    {
+        QMessageBox::critical(this, "No document found", "No help document found!");
+    }
+}
+
+void MainWindow::on_actionAbout_us_triggered()
+{
+    QDesktopServices::openUrl(QUrl("https://github.com/qjy981010/qjy_c_task"));
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    ui->actionClose->triggered();
+    dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                            "",
+                                            QFileDialog::ShowDirsOnly
+                                            | QFileDialog::DontResolveSymlinks);
+    if (dir == "") return;
+    if (dir[dir.length()-1] != '/') dir += '/';
+    if (load_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
+    {
+        qDebug() << dir+"org.dat";
+        QMessageBox::critical(this, "Open error", "Fail to load data in "+dir);
+        return;
+    }
+    initTree();
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    qDebug() << "save";
+    if (!ischanged) return;
+    if (!dir.length())
+    {
+        dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                "",
+                                                QFileDialog::ShowDirsOnly
+                                                | QFileDialog::DontResolveSymlinks);
+        if (dir[dir.length()-1] != '/') dir += '/';
+    }
+    if (write_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
+    {
+        QMessageBox::critical(this, "Save error", "Fail to save data to "+dir);
+        return;
+    }
+    ischanged = 0;
+}
+
+
+void MainWindow::on_actionClose_triggered()
+{
+    qDebug() << "close";
+    if (!dir.length()) return;
+    if (ischanged && QMessageBox::Yes == QMessageBox::question(this, "Save or not", "Do you want to save the files before close?"))
+    {
+        if (write_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
+        {
+            QMessageBox::critical(this, "Save error", "Fail to save data to "+dir);
+            return;
+        }
+    }
+    ui->treeWidget->clear();
+    childlist->clear();
+    infolist->clear();
+    ui->deleteButton->setDisabled(1);
+    ui->insertButton->setDisabled(1);
+    delall();
+    dir = "";
+    ischanged = 0;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (!ischanged) return;
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Achievement Manager",
+                                                                tr("Do you want to save the files before close?\n"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn == QMessageBox::Cancel)
+    {
+        event->ignore();
+    }
+    else if (resBtn == QMessageBox::No)
+    {
+        event->accept();
+    }
+    else
+    {
+        on_actionSave_triggered();
+        event->accept();
     }
 }
