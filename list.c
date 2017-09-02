@@ -1,8 +1,10 @@
 #include "list.h"
 
-org_node* org_list_head = 0;
+org_node* org_list_head = 0; // 一级链表头
 
-void trimncpy(char* target, char* from, int n)
+// 功能：多余空格去除，并进行字符串拷贝，最多拷贝n个字符；
+// 输入参数：源字符串，目标字符串，最多拷贝字符数；
+void trimncpy(char* target, char* from, int n) // 可以去除多余空格的strncpy
 {
     char* it = from;
     char* targetit = target;
@@ -25,6 +27,9 @@ void trimncpy(char* target, char* from, int n)
     *targetit = '\0';
 }
 
+// 功能：遍历判断是否有重名单位,若没有则插入新结点；
+// 输入参数：新研发单位信息；
+// 返回值：指向新单位的指针。
 org_node* insert_org(char* id, char* name, char* chairman, char* phone_num)
 {
     org_node* it = org_list_head;
@@ -57,6 +62,9 @@ org_node* insert_org(char* id, char* name, char* chairman, char* phone_num)
     return new_node;
 }
 
+// 功能：遍历此链表查看是否有重名成果,若没有则插入新结点；
+// 输入参数：所属单位结点指针，新成果信息；
+// 返回值：指向新成果的指针。
 achi_node* insert_achi(org_node* org_ptr, char* id, char* name, char* field,  char* org,
         char* mvp, char* price_name, char* price_class, int price_ranking)
 {
@@ -95,6 +103,9 @@ achi_node* insert_achi(org_node* org_ptr, char* id, char* name, char* field,  ch
     return new_node;
 }
 
+// 功能：遍历所在链表判断是否有重名完成人，若没有则插入新结点；
+// 输入参数：所属成果结点指针，新完成人信息；
+// 返回值：指向新完成人的指针。
 contr_node* insert_contr(achi_node* achi_ptr, char* name, char* id, char* org,
     char* result_name, char gender, int age, char* job_title, int ranking)
 {
@@ -128,6 +139,9 @@ contr_node* insert_contr(achi_node* achi_ptr, char* name, char* id, char* org,
     return new_node;
 }
 
+// 功能：修改指定单位信息；
+// 输入参数：当前结点指针，要修改的信息索引，修改后的值；
+// 返回值：不可修改返回0，修改对象为字符串或字符返回1，为数字返回2；
 char modify_org(org_node* org_ptr, char key, char* new_val)
 {
     switch (key)
@@ -158,6 +172,9 @@ char modify_org(org_node* org_ptr, char key, char* new_val)
     }
 }
 
+// 功能：修改指定成果信息；
+// 输入参数：当前结点指针，要修改的信息索引，修改后的值；
+// 返回值：不可修改返回0，修改对象为字符串或字符返回1，为数字返回2；
 char modify_achi(achi_node* achi_ptr, char key, char* new_val, int new_int)
 {
     switch (key)
@@ -184,6 +201,9 @@ char modify_achi(achi_node* achi_ptr, char key, char* new_val, int new_int)
     }
 }
 
+// 功能：修改指定完成人信息；
+// 输入参数：当前结点指针，要修改的信息索引，修改后的值；
+// 返回值：不可修改返回0，修改对象为字符串或字符返回1，为数字返回2；
 char modify_contr(contr_node* contr_ptr, char key, char* new_val, int new_int)
 {
     switch (key)
@@ -200,6 +220,8 @@ char modify_contr(contr_node* contr_ptr, char key, char* new_val, int new_int)
     }
 }
 
+// 功能：删除指定结点；
+// 输入参数：当前结点指针，前一个结点指针，此链表头指针；
 void delete_org(org_node* org_ptr, org_node* pre_org_ptr)
 {
     achi_node* achi_ptr = org_ptr->achievements;
@@ -223,6 +245,8 @@ void delete_org(org_node* org_ptr, org_node* pre_org_ptr)
     free(org_ptr);
 }
 
+// 功能：删除指定结点；
+// 输入参数：当前结点指针，前一个结点指针，此链表头指针；
 void delete_achi(achi_node* achi_ptr, achi_node* pre_achi_ptr, org_node* org_ptr)
 {
     contr_node* contr_ptr = achi_ptr->contributors;
@@ -242,6 +266,8 @@ void delete_achi(achi_node* achi_ptr, achi_node* pre_achi_ptr, org_node* org_ptr
     --org_ptr->info.achi_num;
 }
 
+// 功能：删除指定结点；
+// 输入参数：当前结点指针，前一个结点指针，此链表头指针；
 void delete_contr(contr_node* contr_ptr, contr_node* pre_contr_ptr, achi_node* achi_ptr)
 {
     if (pre_contr_ptr) pre_contr_ptr->next = contr_ptr->next;
@@ -249,7 +275,9 @@ void delete_contr(contr_node* contr_ptr, contr_node* pre_contr_ptr, achi_node* a
     --achi_ptr->info.contr_num;
 }
 
-
+// 功能：将链表中的数据写入文件中；
+// 输入参数：存有单位、成果、完成人信息的文件名；
+// 返回值：0为成果，1为打开失败。
 char write_data(char* org_file, char* achi_file, char* contr_file)
 {
     FILE* fp_org = fopen(org_file, "wb");
@@ -284,6 +312,9 @@ char write_data(char* org_file, char* achi_file, char* contr_file)
     }
 }
 
+// 功能：判断文件是否存在，读取数据文件至链表；
+// 输入参数：存有单位、成果、完成人信息的文件名；
+// 返回值：0为成功，1为打开失败。
 char load_data(char* org_file, char* achi_file, char* contr_file)
 {
     FILE* fp_org = fopen(org_file, "rb");
@@ -338,6 +369,9 @@ char load_data(char* org_file, char* achi_file, char* contr_file)
     }
 }
 
+// 功能：根据名称获取单位结点；
+// 输入参数：当前结点名称，用于存放上一结点的指针地址
+// 返回值：指向当前结点指针
 org_node* get_org_by_name(char* org_name, org_node** pre_node)
 {
     org_node* org_ptr = org_list_head;
@@ -354,6 +388,9 @@ org_node* get_org_by_name(char* org_name, org_node** pre_node)
     return 0;
 }
 
+// 功能：根据名称获取成果结点；
+// 输入参数：单位名，成果名，存放前一个结点与当前单位的指针的地址；
+// 返回值：指向当前结点的指针
 achi_node* get_achi_by_name(char* org_name, char* achi_name, achi_node** pre_node, org_node** cur_org)
 {
     org_node* org_ptr = org_list_head;
@@ -380,6 +417,9 @@ achi_node* get_achi_by_name(char* org_name, char* achi_name, achi_node** pre_nod
     return 0;
 }
 
+// 功能：根据名称获取完成人结点；
+// 输入参数：单位名，成果名，完成人名，存放前一结点与当前成果指针地址；
+// 返回值：指向当前结点的指针；
 contr_node* get_contr_by_name(char* org_name, char* achi_name, char* contr_name, contr_node** pre_node, achi_node** cur_achi)
 {
     org_node* org_ptr = org_list_head;
@@ -420,6 +460,8 @@ int min(int a, int b)
     return a > b ? b : a;
 }
 
+// 功能：计算两字符串的Damerau–Levenshtein distance；
+// 输入参数：两个需比较的字符串。
 int dl_distance(char* p_string1, char* p_string2)
 {
     int l_string_length1 = strlen(p_string1);
@@ -453,6 +495,8 @@ int dl_distance(char* p_string1, char* p_string2)
     return d[l_string_length1][l_string_length2];
 }
 
+// 功能：如果需要，按成果数排序各单位；
+// 输入参数：当前结点，前一个结点；
 void sort_orgs_if_needed(org_node* cur_org, org_node* pre_org)
 {
     if (!cur_org) return;
@@ -477,6 +521,9 @@ void sort_orgs_if_needed(org_node* cur_org, org_node* pre_org)
     }
 }
 
+// 功能：根据指定年龄段过滤第一完成人；
+// 输入参数：开始年龄，结束年龄；
+// 返回值：符合年龄段的完成人链表头；
 contr_node* filter_by_age_MVC(int from, int to)
 {
     if (from > to || !to) return 0;
@@ -504,6 +551,9 @@ contr_node* filter_by_age_MVC(int from, int to)
     return result;
 }
 
+// 功能：根据指定年龄段过滤完成人；
+// 输入参数：开始年龄，输入年龄；
+// 返回值：符合年龄段的第一完成人链表头；
 contr_node* filter_by_age(int from, int to)
 {
     if (from > to || !to) return 0;
@@ -530,6 +580,8 @@ contr_node* filter_by_age(int from, int to)
     return result;
 }
 
+// 功能：删除上述两个函数生成的链表。
+// 输入参数：完成人链表头；
 void delete_contr_list(contr_node* head)
 {
     contr_node* it = head, *temp;
@@ -540,6 +592,7 @@ void delete_contr_list(contr_node* head)
     }
 }
 
+// 功能：删除整个链表，将链表在堆中的数据清除。
 void delall()
 {
     org_node* it_org_ptr = org_list_head;

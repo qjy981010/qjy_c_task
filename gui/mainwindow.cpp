@@ -2,6 +2,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+// 构造函数
+// 功能：初始化主窗口。
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -19,11 +21,14 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(shortcut, SIGNAL(activated()), this, SLOT(on_searchButton_clicked()));
 }
 
+// 析构函数
+// 功能：进行空间释放
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+// 功能：读取链表，初始化树状结构。
 void MainWindow::initTree()
 {
     QTreeWidgetItem* org;
@@ -48,6 +53,7 @@ void MainWindow::initTree()
     }
 }
 
+// 功能：更新当前单元的信息；
 void MainWindow::resetInfo()
 {
     if (cur_item->parent())
@@ -95,6 +101,8 @@ void MainWindow::resetInfo()
     }
 }
 
+// 功能：将选中结点的信息展示出来，单击树状结构item调用；
+// 输入参数：树状结构单元的指针；
 void MainWindow::setInfo(QTreeWidgetItem* item)
 {
     cur_item = item;
@@ -187,6 +195,8 @@ void MainWindow::setInfo(QTreeWidgetItem* item)
     }
 }
 
+// 功能：对可以修改的信息项，获取修改信息并修改，双击信息调用；
+// 输入参数：被双击的listitem指针；
 void MainWindow::modifyInfo(QListWidgetItem* item)
 {
     QStringList pieces = item->text().split( ": " );
@@ -195,6 +205,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
     QString newval;
     bool dialogResult;
     char rightmodify = 0;
+    char* newname = 0;
     int index = infolist->row(item);
     ischanged = 1;
     if (cur_item->parent())
@@ -248,6 +259,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                         }
                     }
                     cur_item->setText(0, newval);
+                    newname = this_contr->info.name;
                 }
                 rightmodify = modify_contr(this_contr, index, newval.toLatin1().data(), newval.toInt());
             }
@@ -311,6 +323,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                         }
                     }
                     cur_item->setText(0, newval);
+                    newname = this_achi->info.result_name;
                 }
                 rightmodify = modify_achi(this_achi, index, newval.toLatin1().data(), newval.toInt());
             }
@@ -335,6 +348,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                     }
                 }
                 cur_item->setText(0, newval);
+                newname = this_org->info.org_name;
             }
             rightmodify = modify_org(this_org, index, newval.toLatin1().data());
         }
@@ -342,18 +356,22 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
     }
     if (rightmodify == 1) item->setText(key + QString(": " + newval));
     else if (rightmodify == 2) item->setText(key + QString(": " + QString::number(newval.toInt())));
+    if (newname) cur_item->setText(0, newname);
 }
 
+// 封装mydialog的accept
 void MainWindow::accept()
 {
     myDialog->accept();
 }
 
+// 封装mydialog的reject
 void MainWindow::reject()
 {
     myDialog->reject();
 }
 
+// 功能：调用内部删除函数，删除当前选中的结点，由“delete”按钮调用；
 void MainWindow::on_deleteButton_clicked()
 {
     qDebug() << "delete button clicked";
@@ -385,6 +403,7 @@ void MainWindow::on_deleteButton_clicked()
     }
 }
 
+// 功能：信息获取，并调用内部插入单位的函数插入新单位，由菜单栏manage->New organization调用；
 void MainWindow::on_actionInsert_organization_triggered()
 {
     qDebug() << "insert org";
@@ -432,6 +451,7 @@ void MainWindow::on_actionInsert_organization_triggered()
     }
 }
 
+// 功能：信息获取，并调用内部插入函数插入成果、完成人，由“insert”按钮调用。
 void MainWindow::on_insertButton_clicked()
 {
     qDebug() << "insert button clicked";
@@ -559,12 +579,14 @@ void MainWindow::on_insertButton_clicked()
     ui->treeWidget->expandItem(cur_item);
 }
 
+// 功能：获取搜索栏字符串搜索相似度最高的单元并展示此项信息；由"search"按钮调用
 void MainWindow::on_searchButton_clicked()
 {
     char searchstr[40];
     strcpy(searchstr, ui->searchLine->text().toLatin1().data());
     int min = INT_MAX, dis;
     QTreeWidgetItem* rightItem = 0;
+    cur_item->setSelected(false);
     if (strlen(searchstr) > 0)
     {
         QTreeWidgetItemIterator it(ui->treeWidget);
@@ -582,6 +604,7 @@ void MainWindow::on_searchButton_clicked()
         }
         if (!rightItem) return;
         ui->treeWidget->itemClicked(rightItem, 0);
+        rightItem->setSelected(true);
         if (rightItem->parent())
         {
             if (rightItem->parent()->parent())
@@ -591,6 +614,8 @@ void MainWindow::on_searchButton_clicked()
     }
 }
 
+// 功能：在当前结点的子链表搜索指定孩子信息并展示，双击右侧表项调用；
+// 输入参数：被双击项的索引值。
 void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
 {
     QString curstr = childlist->currentItem()->text();
@@ -605,11 +630,13 @@ void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
     }
 }
 
+// 功能：实现对科研单位在界面层上的排序；由Manage->Sort Organization调用
 void MainWindow::on_actionSort_organizations_triggered()
 {
     initTree();
 }
 
+// 功能：获取年龄段并调用内部函数，最后展示符合要求的完成人信息；
 void MainWindow::on_actionSearch_among_contributors_triggered()
 {
     qDebug() << "filter by age";
@@ -655,6 +682,7 @@ void MainWindow::on_actionSearch_among_contributors_triggered()
     }
 }
 
+// 功能：获取年龄段并调用内部函数，最后展示符合要求的完成人信息；
 void MainWindow::on_actionsearch_among_MVC_triggered()
 {
     qDebug() << "filter by age";
@@ -701,9 +729,10 @@ void MainWindow::on_actionsearch_among_MVC_triggered()
     }
 }
 
+// 功能：获取并展示当前文件夹下的帮助文档（./README.md）；无此文件时弹出错误框
 void MainWindow::on_actionHelp_document_triggered()
 {
-    QFile documentfile("../README.md");
+    QFile documentfile("./README.md");
     if (documentfile.open(QFile::ReadOnly)) {
         QTextStream in(&documentfile);
         QString document = in.readAll();
@@ -729,11 +758,13 @@ void MainWindow::on_actionHelp_document_triggered()
     }
 }
 
+// 功能：在默认浏览器打开此项目的github页面；
 void MainWindow::on_actionAbout_us_triggered()
 {
     QDesktopServices::openUrl(QUrl("https://github.com/qjy981010/qjy_c_task"));
 }
 
+// 功能：如果此时有文件打开则调用先判断是否保存后关闭当前文件，然后选择数据文件所在文件夹，调用load_data读取；
 void MainWindow::on_actionOpen_triggered()
 {
     ui->actionClose->triggered();
@@ -752,6 +783,7 @@ void MainWindow::on_actionOpen_triggered()
     initTree();
 }
 
+// 功能：将链表中数据保存在数据文件中，若无文件打开则需先选择所要保存的文件夹；
 void MainWindow::on_actionSave_triggered()
 {
     qDebug() << "save";
@@ -762,6 +794,7 @@ void MainWindow::on_actionSave_triggered()
                                                 "",
                                                 QFileDialog::ShowDirsOnly
                                                 | QFileDialog::DontResolveSymlinks);
+        if (dir == "") return;
         if (dir[dir.length()-1] != '/') dir += '/';
     }
     if (write_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
@@ -772,18 +805,13 @@ void MainWindow::on_actionSave_triggered()
     ischanged = 0;
 }
 
-
+// 功能：若文件有更改则提示是否保存，然后关闭文件。
 void MainWindow::on_actionClose_triggered()
 {
     qDebug() << "close";
-    if (!dir.length()) return;
     if (ischanged && QMessageBox::Yes == QMessageBox::question(this, "Save or not", "Do you want to save the files before close?"))
     {
-        if (write_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
-        {
-            QMessageBox::critical(this, "Save error", "Fail to save data to "+dir);
-            return;
-        }
+        on_actionSave_triggered();
     }
     ui->treeWidget->clear();
     childlist->clear();
@@ -795,6 +823,7 @@ void MainWindow::on_actionClose_triggered()
     ischanged = 0;
 }
 
+// 功能：Override Qt的退出事件退出前提示保存。
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if (!ischanged) return;
