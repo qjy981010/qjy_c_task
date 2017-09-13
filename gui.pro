@@ -26,14 +26,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        ../list.c \
-    mylistitem.cpp
+        list.c
 
 HEADERS += \
         mainwindow.h \
-        ../list.h \
-    mylistitem.h
+        list.h
 
 FORMS += \
-        mainwindow.ui \
-    mylistitem.ui
+        mainwindow.ui

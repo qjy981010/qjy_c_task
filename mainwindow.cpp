@@ -36,7 +36,7 @@ void MainWindow::initTree()
     QTreeWidgetItem* contr;
     ui->treeWidget->clear();
     org_node* it_org_ptr = org_list_head;
-    for (; it_org_ptr; it_org_ptr = it_org_ptr->next) {
+    for (; it_org_ptr; it_org_ptr = it_org_ptr->next) { // 遍历链表, 为树结构添加结点
         org = new QTreeWidgetItem(ui->treeWidget);
         org->setText(0, it_org_ptr->info.org_name);
         achi_node* it_achi_ptr = it_org_ptr->achievements;
@@ -103,7 +103,7 @@ void MainWindow::resetInfo()
 
 // 功能：将选中结点的信息展示出来，单击树状结构item调用；
 // 输入参数：树状结构单元的指针；
-void MainWindow::setInfo(QTreeWidgetItem* item)
+void MainWindow::setInfo(QTreeWidgetItem* item) // 设置中间信息栏以及右侧次级结点栏内容
 {
     cur_item = item;
     ui->treeWidget->expandItem(item);
@@ -200,13 +200,13 @@ void MainWindow::setInfo(QTreeWidgetItem* item)
 void MainWindow::modifyInfo(QListWidgetItem* item)
 {
     QStringList pieces = item->text().split( ": " );
-    QString key = pieces.value(0);
-    QString val = pieces.value(1);
+    QString key = pieces.value(0); // key
+    QString val = pieces.value(1); // value
     QString newval;
     bool dialogResult;
     char rightmodify = 0;
     char* newname = 0;
-    int index = infolist->row(item);
+    int index = infolist->row(item); // 根据在表中的位置获取需要修改的信息
     ischanged = 1;
     if (cur_item->parent())
     {
@@ -214,9 +214,9 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
         {
             switch (index)
             {
-            case 2: return;
+            case 2: return; // 不可修改, 下同
             case 3: return;
-            case 4:
+            case 4: // 性别修改
             {
                 myDialog = new QDialog;
                 QPushButton okbtn("ok");
@@ -238,7 +238,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                 newval = genderline.currentText();
                 break;
             }
-            default:
+            default: // 其他修改
             {
                 QInputDialog* modifyDialog = new QInputDialog();
                 newval = modifyDialog->getText(0, "modify", "New " + key, QLineEdit::Normal,
@@ -246,9 +246,9 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                 delete modifyDialog;
             }
             }
-            if (newval.length() > 0 && dialogResult)
+            if (newval.length() > 0 && dialogResult) // 修改有效
             {
-                if (index == 0)
+                if (index == 0) // 如果修改了名称, 检查重名
                 {
                     for (contr_node* it = cur_achi->contributors; it; it = it->next)
                     {
@@ -270,7 +270,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
             {
             case 3: return;
             case 8: return;
-            case 6:
+            case 6: // 等级修改
             {
                 myDialog = new QDialog;
                 QPushButton okbtn("ok");
@@ -292,7 +292,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                 myDialog->setLayout(&modifylayout);
                 dialogResult = (myDialog->exec() == QDialog::Accepted);
                 newval = priceclassline.currentText();
-                if (dialogResult)
+                if (dialogResult) // 维护各等级结点数
                 {
                     if (val[0] == 'N') --cur_org->info.national_achi_num;
                     else if (val[0] == 'P') --cur_org->info.provincial_achi_num;
@@ -303,7 +303,7 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                 }
                 break;
             }
-            default:
+            default: // 其他修改
             {
                 QInputDialog* modifyDialog = new QInputDialog();
                 newval = modifyDialog->getText(0, "modify", "New " + key, QLineEdit::Normal,
@@ -311,9 +311,9 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
                 delete modifyDialog;
             }
             }
-            if (newval.length() > 0 && dialogResult)
+            if (newval.length() > 0 && dialogResult) // 修改有效
             {
-                if (index == 1) {
+                if (index == 1) { // 修改名称, 检查重名
                     for (achi_node* it = cur_org->achievements; it; it = it->next)
                     {
                         if (!strcmp(newval.toLatin1().data(), it->info.result_name))
@@ -335,9 +335,9 @@ void MainWindow::modifyInfo(QListWidgetItem* item)
         QInputDialog* modifyDialog = new QInputDialog();
         newval = modifyDialog->getText(0, "modify", "New " + key, QLineEdit::Normal,
                                                val, &dialogResult);
-        if (dialogResult)
+        if (dialogResult) // 修改有效
         {
-            if (index == 1) {
+            if (index == 1) { // 修改名称, 检查重名
                 for (org_node* it = org_list_head; it; it = it->next)
                 {
                     if (!strcmp(newval.toLatin1().data(), it->info.org_name))
@@ -376,6 +376,7 @@ void MainWindow::on_deleteButton_clicked()
 {
     qDebug() << "delete button clicked";
     ischanged = 1;
+    // 提示, 防止误删
     if (QMessageBox::Yes == QMessageBox::warning(NULL, "warning", "Do you really want to delete "+cur_item->text(0)+"?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
     {
         if (cur_item->parent())
@@ -436,7 +437,7 @@ void MainWindow::on_actionInsert_organization_triggered()
     myDialog->setLayout(&insertlayout);
     int result = myDialog->exec();
     org_node* neworg;
-    if (result == QDialog::Accepted && !nameline.text().isEmpty())
+    if (result == QDialog::Accepted && !nameline.text().isEmpty()) // 信息有效
     {
         if (neworg = insert_org(idline.text().toLatin1().data(), nameline.text().toLatin1().data(),
                         chairmanline.text().toLatin1().data(), phoneline.text().toLatin1().data()))
@@ -447,6 +448,10 @@ void MainWindow::on_actionInsert_organization_triggered()
             qDebug() << "phone " << phoneline.text();
             QTreeWidgetItem* org = new QTreeWidgetItem(ui->treeWidget);
             org->setText(0, neworg->info.org_name);
+        }
+        else // 重名
+        {
+            QMessageBox::warning(this, "Name has been used", "Name "+nameline.text()+" has been used before!");
         }
     }
 }
@@ -496,7 +501,7 @@ void MainWindow::on_insertButton_clicked()
         myDialog->setLayout(&insertlayout);
         int result = myDialog->exec();
         contr_node* newcontr;
-        if (result == QDialog::Accepted && !nameline.text().isEmpty())
+        if (result == QDialog::Accepted && !nameline.text().isEmpty()) // 信息有效
         {
             if (newcontr = insert_contr(this_achi, nameline.text().toLatin1().data(), idline.text().toLatin1().data(),
                               cur_item->parent()->text(0).toLatin1().data(), cur_item->text(0).toLatin1().data(),
@@ -512,6 +517,10 @@ void MainWindow::on_insertButton_clicked()
                 childlist->addItem(nameline.text());
                 QTreeWidgetItem* contr = new QTreeWidgetItem(cur_item);
                 contr->setText(0, newcontr->info.name);
+            }
+            else // 重名
+            {
+                QMessageBox::warning(this, "Name has been used", "Name "+nameline.text()+" has been used before!");
             }
         }
     }
@@ -555,7 +564,7 @@ void MainWindow::on_insertButton_clicked()
         myDialog->setLayout(&insertlayout);
         int result = myDialog->exec();
         achi_node* newachi;
-        if (result == QDialog::Accepted && !nameline.text().isEmpty()) {
+        if (result == QDialog::Accepted && !nameline.text().isEmpty()) { // 信息有效
             if (newachi = insert_achi(this_org, idline.text().toLatin1().data(), nameline.text().toLatin1().data(),
                             fieldline.text().toLatin1().data(), cur_item->text(0).toLatin1().data(),
                             mvpline.text().toLatin1().data(), pricenameline.text().toLatin1().data(),
@@ -573,6 +582,10 @@ void MainWindow::on_insertButton_clicked()
                 achi->setText(0, newachi->info.result_name);
                 sort_orgs_if_needed(this_org, pre_org);
             }
+            else // 重名
+            {
+                QMessageBox::warning(this, "Name has been used", "Name "+nameline.text()+" has been used before!");
+            }
         }
     }
     resetInfo();
@@ -586,10 +599,10 @@ void MainWindow::on_searchButton_clicked()
     strcpy(searchstr, ui->searchLine->text().toLatin1().data());
     int min = INT_MAX, dis;
     QTreeWidgetItem* rightItem = 0;
-    cur_item->setSelected(false);
-    if (strlen(searchstr) > 0)
+    if (cur_item) cur_item->setSelected(false);
+    if (strlen(searchstr) > 0) // 搜索内容不为空
     {
-        QTreeWidgetItemIterator it(ui->treeWidget);
+        QTreeWidgetItemIterator it(ui->treeWidget); // 遍历, 找到相似度最高的
         while (*it)
         {
             dis = dl_distance((*it)->text(0).toLatin1().data(), searchstr);
@@ -598,14 +611,14 @@ void MainWindow::on_searchButton_clicked()
             {
                 min = dis;
                 rightItem = *it;
-                if (dis == 0) break;
+                if (dis == 0) break; // 如果完全相等, 跳出
             }
             ++it;
         }
         if (!rightItem) return;
-        ui->treeWidget->itemClicked(rightItem, 0);
+        ui->treeWidget->itemClicked(rightItem, 0); // 选中此项
         rightItem->setSelected(true);
-        if (rightItem->parent())
+        if (rightItem->parent()) // 展开父级树
         {
             if (rightItem->parent()->parent())
                 ui->treeWidget->expandItem(rightItem->parent()->parent());
@@ -619,7 +632,7 @@ void MainWindow::on_searchButton_clicked()
 void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
 {
     QString curstr = childlist->currentItem()->text();
-    for (int i = 0; i < cur_item->childCount(); ++i)
+    for (int i = 0; i < cur_item->childCount(); ++i) // 遍历子链表, 找到此项
     {
         if (cur_item->child(i)->text(0) == curstr)
         {
@@ -633,6 +646,7 @@ void MainWindow::on_childList_doubleClicked(const QModelIndex &index)
 // 功能：实现对科研单位在界面层上的排序；由Manage->Sort Organization调用
 void MainWindow::on_actionSort_organizations_triggered()
 {
+    // 实际上内部的链表排序, 在插入删除时已完成, 但界面上未更新, 此为重新构建树状结构
     initTree();
 }
 
@@ -661,17 +675,17 @@ void MainWindow::on_actionSearch_among_contributors_triggered()
     int result = myDialog->exec();
     if (result == QDialog::Accepted) {
         contr_node* head = filter_by_age(fromline.text().toInt(), toline.text().toInt());
-        if (!head)
+        if (!head) // 未找到
         {
             QMessageBox::information(this, "no result", "No contributor aged from " + fromline.text() + " to " + toline.text());
         }
         QString info = "";
-        for (contr_node* it = head; it; it = it->next)
+        for (contr_node* it = head; it; it = it->next) // 获取信息
         {
             info += QString("name: %1\nid: %2\norganization: %3\nachievement: %4\ngender: %5\nage: %6\njob title: %7\nachievement ranking: %8\n\n").arg(
                         it->info.name, it->info.id_num, it->info.org, it->info.result_name, QString(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
         }
-        myDialog = new QDialog;
+        myDialog = new QDialog; // 展示结果
         myDialog->setWindowTitle("Filter by age from " + fromline.text() + " to " + toline.text());
         QTextEdit textedit;
         textedit.setText(info);
@@ -707,17 +721,17 @@ void MainWindow::on_actionsearch_among_MVC_triggered()
     int result = myDialog->exec();
     if (result == QDialog::Accepted) {
         contr_node* head = filter_by_age_MVC(fromline.text().toInt(), toline.text().toInt());
-        if (!head)
+        if (!head) // 未找到
         {
             QMessageBox::information(this, "no result", "no MVC aged from " + fromline.text() + " to " + toline.text());
         }
         QString info = "";
-        for (contr_node* it = head; it; it = it->next)
+        for (contr_node* it = head; it; it = it->next) // 获取信息
         {
             info += QString("name: %1\nid: %2\norganization: %3\nachievement: %4\ngender: %5\nage: %6\njob title: %7\nachievement ranking: %8\n\n").arg(
                         it->info.name, it->info.id_num, it->info.org, it->info.result_name, QString(it->info.gender), QString::number(it->info.age), it->info.job_title, QString::number(it->info.ranking));
         }
-        myDialog = new QDialog;
+        myDialog = new QDialog; // 展示结果
         myDialog->setWindowTitle("Filter by age from " + fromline.text() + " to " + toline.text());
         QTextEdit textedit;
         textedit.setText(info);
@@ -750,9 +764,10 @@ void MainWindow::on_actionHelp_document_triggered()
         documentlayout.addWidget(&okbtn, 1, 0, 1, 2);
         documentlayout.addWidget(&cancelbtn, 1, 2, 1, 2);
         myDialog->setLayout(&documentlayout);
+        myDialog->resize(700, 500);
         myDialog->exec();
     }
-    else
+    else // 未找到readme文件
     {
         QMessageBox::critical(this, "No document found", "No help document found!");
     }
@@ -767,8 +782,8 @@ void MainWindow::on_actionAbout_us_triggered()
 // 功能：如果此时有文件打开则调用先判断是否保存后关闭当前文件，然后选择数据文件所在文件夹，调用load_data读取；
 void MainWindow::on_actionOpen_triggered()
 {
-    ui->actionClose->triggered();
-    dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    ui->actionClose->triggered(); // 调用close, 关闭当前文件
+    dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"), // 获取要打开的目录
                                             "",
                                             QFileDialog::ShowDirsOnly
                                             | QFileDialog::DontResolveSymlinks);
@@ -776,7 +791,7 @@ void MainWindow::on_actionOpen_triggered()
     if (dir[dir.length()-1] != '/') dir += '/';
     if (load_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
     {
-        qDebug() << dir+"org.dat";
+        qDebug() << dir+"org.dat"; // 打开失败
         QMessageBox::critical(this, "Open error", "Fail to load data in "+dir);
         return;
     }
@@ -787,8 +802,8 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     qDebug() << "save";
-    if (!ischanged) return;
-    if (!dir.length())
+    if (!ischanged) return; // 未改动则返回
+    if (!dir.length()) // 无文件打开时, 选择要保存的位置
     {
         dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                 "",
@@ -797,20 +812,23 @@ void MainWindow::on_actionSave_triggered()
         if (dir == "") return;
         if (dir[dir.length()-1] != '/') dir += '/';
     }
+    // 写入数据
     if (write_data((dir+"org.dat").toLatin1().data(), (dir+"achi.dat").toLatin1().data(), (dir+"contr.dat").toLatin1().data()))
     {
         QMessageBox::critical(this, "Save error", "Fail to save data to "+dir);
         return;
     }
-    ischanged = 0;
+    ischanged = 0; // 未更改
 }
 
 // 功能：若文件有更改则提示是否保存，然后关闭文件。
 void MainWindow::on_actionClose_triggered()
 {
     qDebug() << "close";
+    // 是否保存
     if (ischanged && QMessageBox::Yes == QMessageBox::question(this, "Save or not", "Do you want to save the files before close?"))
     {
+        // 保存
         on_actionSave_triggered();
     }
     ui->treeWidget->clear();
@@ -826,20 +844,22 @@ void MainWindow::on_actionClose_triggered()
 // 功能：Override Qt的退出事件退出前提示保存。
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-    if (!ischanged) return;
+    // 退出前
+    if (!ischanged) return; // 未修改, 直接退出
+    // 有修改, 提示保存
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "Achievement Manager",
                                                                 tr("Do you want to save the files before close?\n"),
                                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
                                                                 QMessageBox::Yes);
-    if (resBtn == QMessageBox::Cancel)
+    if (resBtn == QMessageBox::Cancel) // 取消, 不退出
     {
         event->ignore();
     }
-    else if (resBtn == QMessageBox::No)
+    else if (resBtn == QMessageBox::No) // 不保存
     {
         event->accept();
     }
-    else
+    else // 保存
     {
         on_actionSave_triggered();
         event->accept();

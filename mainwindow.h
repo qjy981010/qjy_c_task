@@ -20,7 +20,6 @@
 #include <QFileDialog>
 #include <QCloseEvent>
 #include <fstream>
-#include "mylistitem.h"
 
 extern "C"
 {
@@ -60,9 +59,9 @@ private slots:
     void on_actionClose_triggered(); // 文件关闭
 
 private:
-    QTreeWidgetItem* cur_item; // 存储左侧树状结构中当前item
+    QTreeWidgetItem* cur_item = 0; // 存储左侧树状结构中当前item
     QDialog* myDialog; // 常用对话框
-    org_node* cur_org; // 当前单元为成果时存储其所在单位
+    org_node* cur_org ; // 当前单元为成果时存储其所在单位
     achi_node* cur_achi; // 当前单元为完成人时存储其所在成果
     org_node* pre_org; // 当前单元为单位时存储前一个单位
     achi_node* pre_achi; // 当前单元为成果时存储前一个成果
